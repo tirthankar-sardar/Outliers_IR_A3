@@ -80,7 +80,60 @@ The following steps were performed:
 
 The model was trained using pairwise preferences, where a document with a higher relevance label is preferred over one with a lower relevance label.
 
-### 6. Hyperparameter Tuning
+### 6. Execution Pipeline and Generated Files
+
+The implementation is organised into preprocessing, feature extraction, model training, hyperparameter tuning, and query evaluation stages.
+
+**Step 1: Preprocessing and Feature Extraction**
+
+Navigate to the `outliers_preprocesing_feature_extraction` folder inside `outliers_SVM_MethodB`.
+
+Run the following scripts in order:
+
+```bash
+python outliers_preprocess.py
+python outliers_build_dataset.py
+```
+
+- `outliers_preprocess.py`: Performs preprocessing of the raw Cranfield documents and queries.
+- `outliers_build_dataset.py`: Generates the query-document feature dataset containing the 22 specified features.
+
+The input files are stored in the `outliers_raw` folder. The generated outputs are saved in the following folders:
+- `outliers_processed`: Contains preprocessed documents and queries.
+- `outliers_features`: Contains the extracted feature datasets.
+
+**Step 2: Model Training and Baseline Comparison**
+
+Return to the main `outliers_SVM_MethodB` folder and execute:
+
+```bash
+python outliers_svm_train.py
+python outliers_baseline_comparison.py
+```
+
+These scripts train the initial Ranking SVM model and perform comparisons against the BM25 and VSM baselines.
+
+The generated models, CSV files, and evaluation results are saved in the `outliers_svm_models` folder.
+
+**Step 3: Hyperparameter Tuning**
+
+To perform hyperparameter tuning using five-fold GroupKFold cross-validation, execute:
+
+```bash
+python outliers_svm_train_tuned.py
+```
+
+The tuned model and its corresponding CSV files, including cross-validation and evaluation results, are saved in the `outliers_svm_models_tuned` folder.
+
+**Step 4: Saving and Reusing the Trained Model**
+
+The trained Ranking SVM model is saved as a `.joblib` file along with its metadata.
+
+The saved model contains the trained pipeline, including feature scaling and the learned SVM parameters. It can be loaded later to rank documents for new queries without retraining the model or requiring relevance judgments.
+
+The saved model is used by `outliers_testB.py`, which is located in the main project directory (outside the `outliers_SVM_MethodB` folder). It loads the trained model and metadata to retrieve and rank documents for user-provided queries without requiring retraining.
+
+### 7. Hyperparameter Tuning
 
 The regularisation parameter C was selected using five-fold GroupKFold cross-validation. Mean NDCG@10 was used as the primary selection metric.
 
@@ -98,7 +151,7 @@ The regularisation parameter C was selected using five-fold GroupKFold cross-val
 
 **Selected hyperparameter: C = 0.0003**
 
-### 7. Final Test Results
+### 8. Final Test Results
 
 The selected model was evaluated on 45 held-out queries.
 
@@ -118,7 +171,7 @@ The selected model was evaluated on 45 held-out queries.
 | BM25 | **0.2756** | 0.4571 | 0.3094 | **0.4488** |
 | VSM | 0.2644 | 0.4623 | 0.3033 | 0.4066 |
 
-### 8. Statistical Significance Testing
+### 9. Statistical Significance Testing
 
 Paired Wilcoxon signed-rank tests were performed to compare Ranking SVM against BM25 using per-query NDCG values.
 
@@ -129,7 +182,7 @@ Paired Wilcoxon signed-rank tests were performed to compare Ranking SVM against 
 
 Both p-values are greater than 0.05. Therefore, the experiment does not establish a statistically significant difference between Ranking SVM and BM25.
 
-### 9. Feature Importance
+### 10. Feature Importance
 
 The learned standardised coefficients indicate the relative contribution of the features to the ranking function.
 
@@ -145,7 +198,7 @@ The five most influential features were:
 
 The model combines multiple retrieval signals rather than depending entirely on a single feature.
 
-### 10. Conclusion
+### 11. Conclusion
 
 The Pairwise Linear Ranking SVM achieved competitive retrieval performance compared with BM25 and VSM.
 
@@ -153,7 +206,7 @@ At K=10, Ranking SVM achieved the highest recall (0.4692) and F1 score (0.3124),
 
 The experiment demonstrates the effectiveness of supervised pairwise learning for combining multiple query-document features to produce ranked document lists.
 
-### 11. Output Files
+### 12. Output Files
 
 The experiment generates the following outputs:
 
