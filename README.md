@@ -77,7 +77,7 @@ The feature extraction module itself uses only the Python standard library. The 
 
 ## 5. Run the Project in the Correct Order
 
-**How to Run (`outliers_testA.py` – Boolean Weighted Query Tester)**
+## How to Run (`outliers_testA.py` – Boolean Weighted Query Tester)
 
 Run the query tester from the project root:
 
@@ -104,7 +104,7 @@ python3 outliers_preprocesing_feature_extraction/outliers_preprocess.py
 
 This script is interactive and does not currently accept `--query`, `--query-file`, `--top-k`, or `--output` options.
 
-**How to Run (`outliers_testB.py` – Ranking SVM)**
+## How to Run (`outliers_testB.py` – Ranking SVM)
 
 Run the Ranking SVM-based query tester from the project root:
 
