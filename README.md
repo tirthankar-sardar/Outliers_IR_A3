@@ -148,7 +148,7 @@ By default, the retrieved document IDs are saved to `svm_query_results.txt`.
 To specify a custom output file for a single query:
 
 ```bash
-python outliers_testB.py --query "air pollution" --top-k 10 --output results.txt
+python outliers_testB.py --query "Aircraft structural design" --top-k 10 --output results.txt
 ```
 
 For multiple queries:
