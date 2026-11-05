@@ -1,7 +1,6 @@
-
-# macOS files
 .DS_Store
 
-# Python cache files
 __pycache__/
 *.py[cod]
+
+svm_query_results.txt
