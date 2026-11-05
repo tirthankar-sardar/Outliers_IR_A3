@@ -117,13 +117,13 @@ python outliers_testB.py
 Alternatively, provide the query directly:
 
 ```bash
-python outliers_testB.py --query "What are the effects of air pollution?"
+python outliers_testB.py --query "Aircraft structural design"
 ```
 
 By default, the system retrieves the **top 10 documents**. To change the number of retrieved documents, use `--top-k`:
 
 ```bash
-python outliers_testB.py --query "air pollution" --top-k 20
+python outliers_testB.py --query "Aircraft structural design" --top-k 20
 ```
 
 **Run Multiple Queries**
@@ -131,7 +131,6 @@ python outliers_testB.py --query "air pollution" --top-k 20
 Create a text file named `queries.txt`, containing one query per line:
 
 ```text
-What are the effects of air pollution?
 Aircraft structural design
 Heat transfer in fluids
 ```
