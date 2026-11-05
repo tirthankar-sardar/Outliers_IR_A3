@@ -67,7 +67,7 @@ Requires Python 3.9 or newer, pandas and nltk. Nothing else needs to be download
 - **Query ID mapping.** `cran.qry` uses IDs like `001, 002, 004, 008…`, but `cranqrel` numbers the queries `1…225`. The k-th query in `cran.qry` is query k in `cranqrel`. Every file therefore has `query_id` (1–225, **use this for all joins**) and `original_query_id` (the file's label, e.g. `"004"`).
 - **Normalization.** Unicode NFKC normalization, lower-casing, control characters removed, and repeated whitespace collapsed.
 - **Tokenization.** Text is split into words and numbers; other punctuation is removed. Scientific terms are kept whole: `boundary-layer`, `x-15`, `0.1`, `15,000`. Numbers and duplicate words are kept, so term frequencies stay correct.
-- **Stopword removal.** A fixed English stopword list (179 words, the NLTK list) is applied, but stored as a separate representation.
+- **Stopword removal.** The list in `data/raw/stopwords.txt` is applied, but stored as a separate representation.
 - **Porter stemming.** NLTK Porter stemmer, applied to the stopword-free tokens (e.g. `flows` → `flow`).
 - **Relevance judgments.** The original grade is kept, and a `binary_relevance` label is added (default: grades 1–4 = relevant). Rows with the undocumented code `-1` go into a separate file.
 - **Splitting.** Queries are split 70/15/15 into **157 train / 34 validation / 34 test**, with seed 42. Each query is in exactly one split, and the documents are not split, so every split searches all 1,400 documents.

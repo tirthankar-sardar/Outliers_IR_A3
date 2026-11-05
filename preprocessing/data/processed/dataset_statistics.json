@@ -65,13 +65,13 @@
       "max": 44
     },
     "query_length_tokens_no_stop": {
-      "mean": 9.987,
+      "mean": 9.56,
       "median": 9,
       "min": 4,
-      "max": 23
+      "max": 22
     },
     "query_vocabulary_size": 975,
-    "query_vocabulary_size_stemmed": 728
+    "query_vocabulary_size_stemmed": 692
   },
   "relevance": {
     "num_original_qrel_rows": 1837,
@@ -138,8 +138,8 @@
   },
   "vocabulary": {
     "tokens": 11217,
-    "tokens_no_stop": 11096,
-    "stemmed_tokens": 8405,
+    "tokens_no_stop": 10947,
+    "stemmed_tokens": 8303,
     "per_field_tokens": {
       "title": 1976,
       "author": 1222,
@@ -149,7 +149,7 @@
   },
   "token_frequency": {
     "total_tokens": 250092,
-    "total_tokens_no_stop": 149757,
+    "total_tokens_no_stop": 143009,
     "hapax_legomena_tokens": 4998,
     "numeric_token_types": 1739,
     "hyphenated_token_types": 1702,
@@ -296,22 +296,22 @@
     "tokenizer": "regex [^\\W_]+(?:-[^\\W_]+|(?<=\\d)[.,]\\d+|'[^\\W_]+)*",
     "possessive_s_removed": true,
     "split_hyphens": false,
-    "stopwords": "embedded NLTK English list (179 words)",
+    "stopwords": "stopwords.txt (358 words)",
     "stemmer": "nltk PorterStemmer (NLTK_EXTENSIONS mode), applied to tokens_no_stop"
   },
   "random_seed": 42,
   "query_mapping_evidence": {
     "positional": {
       "num_queries_scored": 225,
-      "mean_query_term_coverage": 0.7245
+      "mean_query_term_coverage": 0.7336
     },
     "identity_original_id": {
       "num_queries_scored": 152,
-      "mean_query_term_coverage": 0.3302
+      "mean_query_term_coverage": 0.3323
     },
     "random_permutation": {
       "num_queries_scored": 225,
-      "mean_query_term_coverage": 0.3465
+      "mean_query_term_coverage": 0.3473
     }
   }
 }

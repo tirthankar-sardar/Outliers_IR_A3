@@ -38,26 +38,13 @@ from functools import lru_cache
 import pandas as pd
 from nltk.stem.porter import PorterStemmer
 
-from src.config import DOCUMENT_FIELDS
+from src.config import DOCUMENT_FIELDS, RAW_DIR
 
-# Fixed snapshot of the NLTK English stopword list (179 words, nltk 3.9.1).
-# It is embedded rather than downloaded so the pipeline runs offline and every
-# group member gets exactly the same list.
+STOPWORDS_PATH = RAW_DIR / "stopwords.txt"
 ENGLISH_STOPWORDS: frozenset[str] = frozenset(
-    """
-    i me my myself we our ours ourselves you you're you've you'll you'd your yours
-    yourself yourselves he him his himself she she's her hers herself it it's its
-    itself they them their theirs themselves what which who whom this that that'll
-    these those am is are was were be been being have has had having do does did
-    doing a an the and but if or because as until while of at by for with about
-    against between into through during before after above below to from up down
-    in out on off over under again further then once here there when where why how
-    all any both each few more most other some such no nor not only own same so
-    than too very s t can will just don don't should should've now d ll m o re ve
-    y ain aren aren't couldn couldn't didn didn't doesn doesn't hadn hadn't hasn
-    hasn't haven haven't isn isn't ma mightn mightn't mustn mustn't needn needn't
-    shan shan't shouldn shouldn't wasn wasn't weren weren't won won't wouldn wouldn't
-    """.split()
+    word.strip().lower()
+    for word in STOPWORDS_PATH.read_text(encoding="utf-8").splitlines()
+    if word.strip()
 )
 
 _ALNUM = r"[^\W_]"  # any Unicode letter or digit
@@ -95,7 +82,7 @@ class PreprocessConfig:
             "tokenizer": "regex " + TOKEN_RE.pattern,
             "possessive_s_removed": True,
             "split_hyphens": self.split_hyphens,
-            "stopwords": f"embedded NLTK English list ({len(ENGLISH_STOPWORDS)} words)",
+            "stopwords": f"{STOPWORDS_PATH.name} ({len(ENGLISH_STOPWORDS)} words)",
             "stemmer": "nltk PorterStemmer (NLTK_EXTENSIONS mode), applied to tokens_no_stop",
         }
 
@@ -130,7 +117,7 @@ def tokenize(text: str, config: PreprocessConfig = DEFAULT_CONFIG) -> list[str]:
 
 
 def remove_stopwords(tokens: list[str]) -> list[str]:
-    """Return ``tokens`` without English stopwords (a new list)."""
+    """Return ``tokens`` without words listed in ``stopwords.txt`` (a new list)."""
     return [t for t in tokens if t not in ENGLISH_STOPWORDS]
 
 

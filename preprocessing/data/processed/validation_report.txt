@@ -1,6 +1,6 @@
 CRANFIELD TASK 1 - DATA VALIDATION REPORT
 ========================================================================
-Generated (UTC): 2026-10-30 17:45:18
+Generated (UTC): 2026-11-02 12:50:34
 Checks run: 35   passed: 30   critical failures: 0   warnings: 5
 OVERALL RESULT: PASS
 
@@ -117,8 +117,8 @@ QUERY ID MAPPING
        distinct qrel query IDs = 225, range 1..225
 [PASS] positional mapping matches relevant documents far better than the alternatives
   - Mean coverage of query stems by their relevant documents' title+body stems:
-    positional = 0.7245
-    identity_original_id = 0.3302
-    random_permutation = 0.3465
+    positional = 0.7336
+    identity_original_id = 0.3323
+    random_permutation = 0.3473
   - The positional correspondence is not stated in the distribution files;
     it is an assumption supported by this evidence.
