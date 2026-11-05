@@ -95,32 +95,37 @@ pip install requirements.txt
 
 ## 6. Run the Project in the Correct Order
 
-### How to Run (`outliers_testA.py` – Boolean Weighted Query Tester)
+### Interactive query tester (`outliers_testA.py`)
 
-Run the query tester from the project root:
-
-```bash
-python3 boolean_weighted/outliers_testA.py
-```
-
-Or move into `boolean_weighted` first and run:
+Run this tester from the project root:
 
 ```bash
-cd boolean_weighted
 python3 outliers_testA.py
 ```
 
-The script prompts for one query at a time. Enter a query at `Query>`; type `quit`, `exit`, or `q` to stop. Queries are normalized, Porter-stemmed, and filtered using the collection's stopwords before matching.
+If your terminal is already in `boolean_weighted`, run:
 
-The tester returns up to **10 documents** by default. The current tuned configuration requires at least **3 distinct query-term matches in the title** and uses title weight 1 (all other field weights are 0). Results are ordered by descending score, then ascending document ID. The script prints each document's ID, score, title, and a body snippet; it does not write results to an output file.
+```bash
+python3 ../outliers_testA.py
+```
 
-Before running, make sure the processed collection exists at `outliers_preprocesing_feature_extraction/outliers_preprocessed/outliers_documents_processed.csv` and the stopword file exists at `outliers_preprocesing_feature_extraction/outliers_raw/stopwords.txt`. If the processed documents are missing, run the preprocessing script first:
+Enter a query at the `Query>` prompt. Type `quit`, `exit`, or `q` to stop. The tester applies the collection's normalization, Porter stemming, and stopword filtering, then returns up to 10 matching documents. It prints each document's ID, score, title, and a short body snippet; it does not save these interactive rankings to a file.
+
+The tester reads `results/boolean_grid_search_results.json` and uses its `selected_configuration` (`min_matches` and `weights`) to score each document for the new query. In the current results file, the selected threshold is 3 and the weights are title=1, author=0, bibliography=0, body=0. These values are loaded from the JSON, so rerunning the grid search and updating that file changes the tester's configuration.
+
+Before running, make sure these files exist:
+
+- `outliers_preprocesing_feature_extraction/outliers_preprocessed/outliers_documents_processed.csv`
+- `outliers_preprocesing_feature_extraction/outliers_raw/stopwords.txt`
+- `boolean_weighted/results/boolean_grid_search_results.json`
+
+If the processed documents are missing, run preprocessing from the project root:
 
 ```bash
 python3 outliers_preprocesing_feature_extraction/outliers_preprocess.py
 ```
 
-This script is interactive and does not currently accept `--query`, `--query-file`, `--top-k`, or `--output` options.
+The tester is interactive and currently does not accept `--query`, `--query-file`, `--top-k`, or `--output` options.
 
 ### How to Run (Method B – Ranking SVM)
 
