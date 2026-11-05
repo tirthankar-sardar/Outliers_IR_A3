@@ -77,7 +77,7 @@ The feature extraction module itself uses only the Python standard library. The 
 
 ## 5. Run the Project in the Correct Order
 
-## How to Run (`outliers_testA.py` – Boolean Weighted Query Tester)
+### How to Run (`outliers_testA.py` – Boolean Weighted Query Tester)
 
 Run the query tester from the project root:
 
@@ -104,46 +104,61 @@ python3 outliers_preprocesing_feature_extraction/outliers_preprocess.py
 
 This script is interactive and does not currently accept `--query`, `--query-file`, `--top-k`, or `--output` options.
 
-## How to Run (`outliers_testB.py` – Ranking SVM)
+### How to Run (Method B – Ranking SVM)
 
-Run the Ranking SVM-based query tester from the project root:
+**Run with a Single Query**
+
+Run the script and enter a query when prompted:
 
 ```bash
-python3 ranking_svm/outliers_testB.py
+python outliers_testB.py
 ```
 
-Or move into `ranking_svm` first and run:
+Alternatively, provide the query directly:
 
 ```bash
-cd ranking_svm
-python3 outliers_testB.py
-```
-
-The script supports both interactive and command-line execution. For a single query, enter the query when prompted or provide it directly using `--query`:
-
-```bash
-python3 outliers_testB.py --query "What are the effects of air pollution?"
+python outliers_testB.py --query "What are the effects of air pollution?"
 ```
 
 By default, the system retrieves the **top 10 documents**. To change the number of retrieved documents, use `--top-k`:
 
 ```bash
-python3 outliers_testB.py --query "air pollution" --top-k 20
+python outliers_testB.py --query "air pollution" --top-k 20
 ```
 
-For multiple queries, create a `queries.txt` file containing one query per line and run:
+**Run Multiple Queries**
+
+Create a text file named `queries.txt`, containing one query per line:
+
+```text
+What are the effects of air pollution?
+Aircraft structural design
+Heat transfer in fluids
+```
+
+Run the script using:
 
 ```bash
-python3 outliers_testB.py --query-file queries.txt --top-k 10
+python outliers_testB.py --query-file queries.txt --top-k 10
 ```
 
-The retrieved document IDs are saved to `svm_query_results.txt` by default. To specify a custom output file, use the `--output` option:
+**Specify Output File**
+
+By default, the retrieved document IDs are saved to `svm_query_results.txt`.
+
+To specify a custom output file for a single query:
 
 ```bash
-python3 outliers_testB.py --query "air pollution" --top-k 10 --output results.txt
+python outliers_testB.py --query "air pollution" --top-k 10 --output results.txt
 ```
 
-Results are ranked in descending order of Ranking SVM decision scores. The output file contains the retrieved document IDs in ranked order.
+For multiple queries:
+
+```bash
+python outliers_testB.py --query-file queries.txt --top-k 10 --output results.txt
+```
+
+**Note:** Results are ranked in descending order of Ranking SVM decision scores. The output file contains the retrieved document IDs in ranked order.
 
 ## 6. Verify Installation
 
@@ -183,27 +198,27 @@ The Boolean implementation uses only Python's standard library and does not requ
 This diagram summarizes the complete workflow.
 
 ```text
-                    Cranfield Dataset
-          Documents, queries and relevance judgments
-                              |
-                              v
-                  Part 1: Dataset Preparation
-             Cleaning, tokenization, stemming and splits
-                              |
-                 +------------+------------+
-                 |                         |
-                 v                         v
-       Part 2: Boolean Zone       Part 3: Feature Extraction
-             Scoring                    (22 features)
-            Method A                     Method B
-                                           |
-                                           v
-                              Part 3b: Feature Matrix
-                                  Construction
-                                           |
-                                           v
-                              Part 4: Linear SVM
-                              Training and Ranking
+                   Cranfield Dataset
+         Documents, queries and relevance judgments
+                             |
+                             v
+                 Part 1: Dataset Preparation
+            Cleaning, tokenization, stemming and splits
+                             |
+                +------------+------------+
+                |                         |
+                v                         v
+      Part 2: Boolean Zone       Part 3: Feature Extraction
+            Scoring                    (22 features)
+           Method A                     Method B
+                                          |
+                                          v
+                             Part 3b: Feature Matrix
+                                 Construction
+                                          |
+                                          v
+                             Part 4: Linear SVM
+                             Training and Ranking
 ```
 
 ## 8. Important Notes
@@ -224,6 +239,4 @@ This diagram summarizes the complete workflow.
 - [Part 3: extraction of the 22 query–document features](feature_extraction/README.md)
 - [Part 3b: feature matrix](feature_matrix/README.md)
 
-  
-The feature extraction package consumes the existing processed CSV files. Matrix
-construction, relevance labeling and SVM training are separate tasks.
+The feature extraction package consumes the existing processed CSV files. Matrix construction, relevance labeling and SVM training are separate tasks.
