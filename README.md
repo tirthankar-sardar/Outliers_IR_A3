@@ -62,18 +62,8 @@ python -m pip install --upgrade pip
 Install the libraries required by the project:
 
 ```bash
-pip install numpy pandas nltk scikit-learn pytest
+pip install requirements.txt
 ```
-
-The main dependencies are:
-
-- **NumPy:** Numerical operations and feature matrix construction.
-- **Pandas:** Processing and handling the Cranfield dataset CSV files.
-- **NLTK:** Stopword removal and Porter stemming.
-- **Scikit-learn:** Feature standardization and Linear SVM implementation.
-- **Pytest:** Unit testing and validation of individual modules.
-
-The feature extraction module itself uses only the Python standard library. The feature matrix module additionally requires NumPy and pytest for its documented execution and tests.
 
 ## 5. Run the Project in the Correct Order
 
