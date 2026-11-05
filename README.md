@@ -210,17 +210,6 @@ This diagram summarizes the complete workflow.
                              Training and Ranking
 ```
 
-## 8. Important Notes
-
-- Always run dataset preparation before running the other modules.
-- Do not manually modify the generated processed CSV files unless required.
-- Use the same Python virtual environment for all modules.
-- The train/validation/test split is shared across the project: 157, 34 and 34 queries, respectively.
-- Do not use test data for weight tuning or model selection.
-- The feature extraction package does not train the SVM.
-- Feature matrix construction does not train the SVM either.
-- Each module has its own README containing detailed implementation and execution instructions.
-
 # Outliers_IR_A3
 
 - [Part 1: dataset preparation](preprocessing/README.md)
