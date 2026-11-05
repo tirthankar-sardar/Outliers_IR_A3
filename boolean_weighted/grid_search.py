@@ -3,12 +3,20 @@ import json
 import itertools
 import heapq
 import os
+import random
 
 from scoring import calculate_score
 from evaluation import evaluate_queries
 
 
 FIELDS = ["title", "author", "bibliography", "body"]
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTLIERS_PROCESSED_DIR = os.path.join(
+    BASE_DIR, "..", "outliers_preprocesing_feature_extraction", "outliers_preprocessed"
+)
+OUTLIERS_QRELS_PATH = os.path.join(
+    BASE_DIR, "..", "outliers_preprocesing_feature_extraction", "outliers_raw", "cranqrel"
+)
 
 
 def load_csv(filename):
@@ -17,12 +25,12 @@ def load_csv(filename):
 
 
 def load_data(data_dir):
-    documents = load_csv(os.path.join(data_dir, "documents_processed.csv"))
-    queries = load_csv(os.path.join(data_dir, "queries_processed.csv"))
-    relevance_rows = load_csv(os.path.join(data_dir, "relevance.csv"))
-    train_rows = load_csv(os.path.join(data_dir, "train_queries.csv"))
-    val_rows = load_csv(os.path.join(data_dir, "val_queries.csv"))
-    test_rows = load_csv(os.path.join(data_dir, "test_queries.csv"))
+    # Read documents, queries, and qrels from the Outliers project. Qrels grade
+    # -1 is unjudged and excluded; grades 1-4 are relevant for this evaluator.
+    documents = load_csv(os.path.join(OUTLIERS_PROCESSED_DIR, "outliers_documents_processed.csv"))
+    queries = load_csv(os.path.join(OUTLIERS_PROCESSED_DIR, "outliers_queries_processed.csv"))
+    with open(OUTLIERS_QRELS_PATH, "r", encoding="utf-8") as qrels_file:
+        qrels_rows = [line.split() for line in qrels_file if line.strip()]
 
     for document in documents:
         document["doc_id"] = int(document["doc_id"])
@@ -31,17 +39,24 @@ def load_data(data_dir):
         query["query_id"] = int(query["query_id"])
 
     relevance = {}
-    for row in relevance_rows:
-        if int(row["binary_relevance"]) == 1:
-            query_id = int(row["query_id"])
-            doc_id = int(row["doc_id"])
+    for row in qrels_rows:
+        if len(row) != 3:
+            raise ValueError(f"Invalid qrels row: {row!r}")
+        query_id, doc_id, grade = map(int, row)
+        if 1 <= grade <= 4:
             relevance.setdefault(query_id, set()).add(doc_id)
 
-    train_query_ids = [int(row["query_id"]) for row in train_rows]
-    val_query_ids = [int(row["query_id"]) for row in val_rows]
-    test_query_ids = [int(row["query_id"]) for row in test_rows]
-
     query_map = {query["query_id"]: query for query in queries}
+    # The Outliers folder has no saved split files, so create reproducible
+    # query-level 70/15/15 splits directly from its processed query IDs.
+    query_ids = sorted(query_map)
+    shuffled_ids = query_ids.copy()
+    random.Random(42).shuffle(shuffled_ids)
+    val_count = round(len(shuffled_ids) * 0.15)
+    test_count = round(len(shuffled_ids) * 0.15)
+    train_query_ids = sorted(shuffled_ids[:len(shuffled_ids) - val_count - test_count])
+    val_query_ids = sorted(shuffled_ids[len(train_query_ids):len(train_query_ids) + val_count])
+    test_query_ids = sorted(shuffled_ids[len(train_query_ids) + val_count:])
 
     return (
         documents,
@@ -204,7 +219,7 @@ def evaluate_split(cached_patterns, weights, relevance, query_ids, k=10):
 
 
 if __name__ == "__main__":
-    DATA_DIR = "../preprocessing/data/processed"
+    DATA_DIR = OUTLIERS_PROCESSED_DIR
     K = 10
     WEIGHT_VALUES = [0, 1, 2, 3, 4, 5]
     THRESHOLDS = [1, 2, 3]
@@ -229,6 +244,7 @@ if __name__ == "__main__":
 
     best_configuration = None
     best_validation_f1 = -1.0
+    threshold_results = []
     print("Precomputing query-term match counts once...")
     cached_counts = precompute_match_count_groups(
         documents,
@@ -269,6 +285,13 @@ if __name__ == "__main__":
         print("Training metrics:", train_metrics)
         print("Validation metrics:", val_metrics)
 
+        threshold_results.append({
+            "min_matches": threshold,
+            "weights": best_weights.copy(),
+            "train_metrics": train_metrics.copy(),
+            "validation_metrics": val_metrics.copy(),
+        })
+
         if val_metrics["f1"] > best_validation_f1:
             best_validation_f1 = val_metrics["f1"]
             best_configuration = {
@@ -298,6 +321,27 @@ if __name__ == "__main__":
 
     print("\nFinal test metrics:")
     print(test_metrics)
+
+    # Persist the Boolean grid-search outcome alongside the separate soft-test
+    # artifacts. This includes each threshold's best training result, the
+    # validation-selected configuration, and its final test evaluation.
+    results_dir = os.path.join(BASE_DIR, "results")
+    os.makedirs(results_dir, exist_ok=True)
+    results_path = os.path.join(results_dir, "boolean_grid_search_results.json")
+    with open(results_path, "w", encoding="utf-8") as results_file:
+        json.dump(
+            {
+                "cutoff": K,
+                "weight_values": WEIGHT_VALUES,
+                "threshold_results": threshold_results,
+                "selected_configuration": best_configuration,
+                "test_metrics": test_metrics,
+                "test_rankings": test_rankings,
+            },
+            results_file,
+            indent=2,
+        )
+    print("Saved Boolean grid-search results to:", results_path)
 
     if test_query_ids:
         sample_query_id = test_query_ids[0]
