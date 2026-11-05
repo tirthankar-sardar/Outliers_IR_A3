@@ -104,61 +104,46 @@ python3 outliers_preprocesing_feature_extraction/outliers_preprocess.py
 
 This script is interactive and does not currently accept `--query`, `--query-file`, `--top-k`, or `--output` options.
 
-**How to Run (Method B – Ranking SVM)**
+**How to Run (`outliers_testB.py` – Ranking SVM)**
 
-### 1. Run with a Single Query
-
-Run the script and enter a query when prompted:
+Run the Ranking SVM-based query tester from the project root:
 
 ```bash
-python outliers_testB.py
+python3 ranking_svm/outliers_testB.py
 ```
 
-Alternatively, provide the query directly:
+Or move into `ranking_svm` first and run:
 
 ```bash
-python outliers_testB.py --query "What are the effects of air pollution?"
+cd ranking_svm
+python3 outliers_testB.py
+```
+
+The script supports both interactive and command-line execution. For a single query, enter the query when prompted or provide it directly using `--query`:
+
+```bash
+python3 outliers_testB.py --query "What are the effects of air pollution?"
 ```
 
 By default, the system retrieves the **top 10 documents**. To change the number of retrieved documents, use `--top-k`:
 
 ```bash
-python outliers_testB.py --query "air pollution" --top-k 20
+python3 outliers_testB.py --query "air pollution" --top-k 20
 ```
 
-### 2. Run Multiple Queries
-
-Create a text file named `queries.txt`, containing one query per line:
-
-```text
-What are the effects of air pollution?
-Aircraft structural design
-Heat transfer in fluids
-```
-
-Run the script using:
+For multiple queries, create a `queries.txt` file containing one query per line and run:
 
 ```bash
-python outliers_testB.py --query-file queries.txt --top-k 10
+python3 outliers_testB.py --query-file queries.txt --top-k 10
 ```
 
-### 3. Specify Output File
-
-By default, the retrieved document IDs are saved to `svm_query_results.txt`.
-
-To specify a custom output file for a single query:
+The retrieved document IDs are saved to `svm_query_results.txt` by default. To specify a custom output file, use the `--output` option:
 
 ```bash
-python outliers_testB.py --query "air pollution" --top-k 10 --output results.txt
+python3 outliers_testB.py --query "air pollution" --top-k 10 --output results.txt
 ```
 
-For multiple queries:
-
-```bash
-python outliers_testB.py --query-file queries.txt --top-k 10 --output results.txt
-```
-
-**Note:** Results are ranked in descending order of Ranking SVM decision scores. The output file contains the retrieved document IDs in ranked order.
+Results are ranked in descending order of Ranking SVM decision scores. The output file contains the retrieved document IDs in ranked order.
 
 ## 6. Verify Installation
 
