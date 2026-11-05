@@ -31,7 +31,35 @@ cd Outliers_IR_A3
 
 The repository contains separate modules for dataset preparation, Boolean Weighted Zone Scoring, feature extraction and feature matrix construction.
 
-## 3. Create a Virtual Environment
+## 3. Project Execution Flow
+
+This diagram summarizes the complete workflow.
+
+```text
+                   Cranfield Dataset
+         Documents, queries and relevance judgments
+                             |
+                             v
+                 Part 1: Dataset Preparation
+            Cleaning, tokenization, stemming and splits
+                             |
+                +------------+------------+
+                |                         |
+                v                         v
+      Part 2: Boolean Zone       Part 3: Feature Extraction
+            Scoring                    (22 features)
+           Method A                     Method B
+                                          |
+                                          v
+                             Part 3b: Feature Matrix
+                                 Construction
+                                          |
+                                          v
+                             Part 4: Linear SVM
+                             Training and Ranking
+```
+
+## 4. Create a Virtual Environment
 
 It is recommended to create a virtual environment to avoid conflicts with libraries installed in the system Python environment.
 
@@ -57,7 +85,7 @@ Upgrade pip:
 python -m pip install --upgrade pip
 ```
 
-## 4. Install Required Libraries
+## 5. Install Required Libraries
 
 Install the libraries required by the project:
 
@@ -65,7 +93,7 @@ Install the libraries required by the project:
 pip install requirements.txt
 ```
 
-## 5. Run the Project in the Correct Order
+## 6. Run the Project in the Correct Order
 
 ### How to Run (`outliers_testA.py` – Boolean Weighted Query Tester)
 
@@ -149,7 +177,7 @@ python outliers_testB.py --query-file queries.txt --top-k 10 --output results.tx
 
 **Note:** Results are ranked in descending order of Ranking SVM decision scores. The output file contains the retrieved document IDs in ranked order.
 
-## 6. Verify Installation
+## 7. Verify Installation
 
 After installation, verify the Python environment and dependencies:
 
@@ -182,35 +210,6 @@ python3 test_boolean.py
 
 The Boolean implementation uses only Python's standard library and does not require third-party packages.
 
-## 7. Project Execution Flow
-
-This diagram summarizes the complete workflow.
-
-```text
-                   Cranfield Dataset
-         Documents, queries and relevance judgments
-                             |
-                             v
-                 Part 1: Dataset Preparation
-            Cleaning, tokenization, stemming and splits
-                             |
-                +------------+------------+
-                |                         |
-                v                         v
-      Part 2: Boolean Zone       Part 3: Feature Extraction
-            Scoring                    (22 features)
-           Method A                     Method B
-                                          |
-                                          v
-                             Part 3b: Feature Matrix
-                                 Construction
-                                          |
-                                          v
-                             Part 4: Linear SVM
-                             Training and Ranking
-```
-
-# Outliers_IR_A3
 
 - [Part 1: dataset preparation](preprocessing/README.md)
 - [Part 2: Boolean Weighted Zone Scoring](boolean_weighted/README_A.md)
