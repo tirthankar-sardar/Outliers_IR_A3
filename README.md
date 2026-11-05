@@ -19,19 +19,7 @@ The project uses Python and standard scientific-computing libraries.
 
 Python 3.9+ is specified by the preprocessing, feature extraction and feature matrix documentation. Python 3.11 is a suggested common environment, not a separately documented tested version.
 
-## 2. Clone the Repository
-
-Open a terminal and execute:
-
-```bash
-git clone https://github.com/trishitasaha/Outliers_IR_A3.git
-
-cd Outliers_IR_A3
-```
-
-The repository contains separate modules for dataset preparation, Boolean Weighted Zone Scoring, feature extraction and feature matrix construction.
-
-## 3. Project Execution Flow
+## 2. Project Execution Flow
 
 This diagram summarizes the complete workflow.
 
@@ -58,6 +46,18 @@ This diagram summarizes the complete workflow.
                              Part 4: Linear SVM
                              Training and Ranking
 ```
+
+## 3. Clone the Repository
+
+Open a terminal and execute:
+
+```bash
+git clone https://github.com/trishitasaha/Outliers_IR_A3.git
+
+cd Outliers_IR_A3
+```
+
+The repository contains separate modules for dataset preparation, Boolean Weighted Zone Scoring, feature extraction and feature matrix construction.
 
 ## 4. Create a Virtual Environment
 
