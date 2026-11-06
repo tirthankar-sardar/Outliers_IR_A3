@@ -119,6 +119,24 @@ The separate `soft_test.py` evaluation used the fixed weights above and did not 
 
 ## 4. Procedure to run the Boolean experiment
 
+Preprocessing and Feature Extraction**
+
+Navigate to the `outliers_preprocesing_feature_extraction` folder inside `outliers_SVM_MethodB`.
+
+Run the following scripts in order:
+
+```bash
+python outliers_preprocess.py
+python outliers_build_dataset.py
+```
+
+- `outliers_preprocess.py`: Performs preprocessing of the raw Cranfield documents and queries.
+- `outliers_build_dataset.py`: Generates the query-document feature dataset containing the 22 specified features.
+
+The input files are stored in the `outliers_raw` folder. The generated outputs are saved in the following folders:
+- `outliers_processed`: Contains preprocessed documents and queries.
+- `outliers_features`: Contains the extracted feature datasets.
+
 1. Open Terminal and move into the project folder, then the Boolean implementation directory:
 
    ```bash
