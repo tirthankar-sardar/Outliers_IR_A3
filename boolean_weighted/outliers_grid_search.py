@@ -27,8 +27,8 @@ def load_csv(filename):
 def load_data(data_dir):
     # Read documents, queries, and qrels from the Outliers project. Qrels grade
     # -1 is unjudged and excluded; grades 1-4 are relevant for this evaluator.
-    documents = load_csv(os.path.join(OUTLIERS_PROCESSED_DIR, "outliers_documents_processed.csv"))
-    queries = load_csv(os.path.join(OUTLIERS_PROCESSED_DIR, "outliers_queries_processed.csv"))
+    documents = load_csv(os.path.join(data_dir, "outliers_documents_processed.csv"))
+    queries = load_csv(os.path.join(data_dir, "outliers_queries_processed.csv"))
     with open(OUTLIERS_QRELS_PATH, "r", encoding="utf-8") as qrels_file:
         qrels_rows = [line.split() for line in qrels_file if line.strip()]
 
@@ -121,7 +121,9 @@ def build_boolean_pattern_cache(cached_counts, min_matches):
                 int(count >= min_matches)
                 for count in match_counts
             )
-            boolean_groups.setdefault(pattern, []).extend(doc_ids)
+            # Keep exact match-count groups separate so that documents tied on
+            # the Boolean score can be ordered by the strength of their match.
+            boolean_groups.setdefault((pattern, match_counts), []).extend(doc_ids)
 
         for doc_ids in boolean_groups.values():
             doc_ids.sort()
@@ -132,28 +134,41 @@ def build_boolean_pattern_cache(cached_counts, min_matches):
 
 
 def rank_from_cached_patterns(cached_patterns, query_id, weights, k=None):
-    """Rank documents; equal scores are ordered by ascending document ID."""
+    """Rank by Boolean score, then weighted term matches, then document ID."""
     score_buckets = {}
     groups = cached_patterns[query_id]
 
-    for pattern, doc_id_groups in groups.items():
+    for (pattern, match_counts), doc_id_groups in groups.items():
         boolean_scores = {
             field: pattern[index]
             for index, field in enumerate(FIELDS)
         }
         score = calculate_score(boolean_scores, weights)
+        match_strength = sum(
+            weights[field] * match_counts[index]
+            for index, field in enumerate(FIELDS)
+        )
 
         if score > 0:
-            score_buckets.setdefault(score, []).append(doc_id_groups)
+            score_buckets.setdefault(score, {}).setdefault(
+                match_strength, []
+            ).append(doc_id_groups)
 
     ranked = []
 
     for score in sorted(score_buckets, reverse=True):
-        # Merge already sorted ID lists, so ties are resolved by document ID.
-        for doc_id in heapq.merge(*score_buckets[score]):
-            ranked.append({"doc_id": doc_id, "score": score})
-            if k is not None and len(ranked) >= k:
-                return ranked
+        for match_strength in sorted(score_buckets[score], reverse=True):
+            # Document ID is the final deterministic tie-break after comparing
+            # both Boolean field score and weighted number of matched terms.
+            id_groups = score_buckets[score][match_strength]
+            for doc_id in heapq.merge(*id_groups):
+                ranked.append({
+                    "doc_id": doc_id,
+                    "score": score,
+                    "match_strength": match_strength,
+                })
+                if k is not None and len(ranked) >= k:
+                    return ranked
 
     return ranked
 

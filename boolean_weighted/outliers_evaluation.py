@@ -1,7 +1,8 @@
 
 def calculate_precision_recall_f1(
     retrieved_docs,
-    relevant_docs
+    relevant_docs,
+    precision_denominator=None,
 ):
     """
     Calculate precision, recall and F1
@@ -18,12 +19,13 @@ def calculate_precision_recall_f1(
         retrieved_set & relevant_set
     )
 
-    if len(retrieved_set) == 0:
+    if precision_denominator is None:
+        precision_denominator = len(retrieved_set)
+
+    if precision_denominator <= 0:
         precision = 0.0
     else:
-        precision = (
-            true_positives / len(retrieved_set)
-        )
+        precision = true_positives / precision_denominator
 
     if len(relevant_set) == 0:
         recall = 0.0
@@ -59,7 +61,8 @@ def evaluate_query(
 
     return calculate_precision_recall_f1(
         retrieved_docs,
-        relevant_docs
+        relevant_docs,
+        precision_denominator=k,
     )
 
 

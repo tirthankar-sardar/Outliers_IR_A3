@@ -4,32 +4,23 @@ This document explains the Boolean Weighted Zone Scoring implementation, the Sof
 
 ## 1. Project layout and data requirements
 
-Run the commands from the `boolean_weighted` directory. The project should have this structure:
+Run the commands from the `boolean_weighted` directory. The Boolean experiment reads the Outliers processed documents and queries, and the Cranfield relevance judgments:
 
 ```text
-Outliers_IR_A3-main/
+Outliers_IR_A3/
 ├── boolean_weighted/
-│   ├── boolean_matching.py
-│   ├── scoring.py
-│   ├── evaluation.py
-│   ├── grid_search.py
-│   ├── test_boolean.py
-│   ├── diagnose_boolean.py       # optional diagnostic
-│   ├── soft_matching.py          # soft experiment
-│   ├── soft_scoring.py           # soft experiment
-│   ├── soft_grid_search.py       # soft experiment
-│   └── soft_test.py              # optional separate soft test evaluation
-└── preprocessing/
-    └── data/processed/
-        ├── documents_processed.csv
-        ├── queries_processed.csv
-        ├── relevance.csv
-        ├── train_queries.csv
-        ├── val_queries.csv
-        └── test_queries.csv
+│   ├── outliers_grid_search.py
+│   ├── outliers_boolean_matching.py
+│   ├── outliers_scoring.py
+│   └── outliers_evaluation.py
+├── outliers_preprocesing_feature_extraction/
+│   ├── outliers_preprocessed/
+│   │   ├── outliers_documents_processed.csv
+│   │   └── outliers_queries_processed.csv
+│   └── outliers_raw/cranqrel
 ```
 
-The scripts expect the processed CSV files to exist in `../preprocessing/data/processed` relative to `boolean_weighted`.
+The Boolean grid search uses the processed CSVs and qrels paths relative to the project root. It creates `boolean_weighted/results/boolean_grid_search_results.json`.
 
 ---
 
@@ -61,31 +52,30 @@ Score(q,d) = w_title * B_title
            + w_body * B_body
 ```
 
-Only documents with a positive score are returned. Results are sorted by descending score, with ascending document ID used to break equal-score ties.
+Only documents with a positive score are returned. Results are sorted by descending Boolean score, then descending weighted term-match count, with ascending document ID as the final tie-break.
 
 ### Weight learning and evaluation
 
-`grid_search.py` searches field weights from 0 to 5, excluding the all-zero combination (1,295 combinations). For each threshold (1, 2, and 3), it chooses the weights with the best training F1 at cutoff 10. It then evaluates those weights on validation queries and selects the threshold/configuration with the best validation F1. After this selection is frozen, it evaluates the selected configuration on the test queries.
+`outliers_grid_search.py` searches field weights from 0 to 5, excluding the all-zero combination (1,295 combinations). For each threshold (1, 2, and 3), it chooses the weights with the best training F1 at cutoff 10. It then evaluates those weights on validation queries and selects the threshold/configuration with the best validation F1. After this selection is frozen, it evaluates the selected configuration on the test queries. Documents are ranked first by their weighted Boolean score, then by weighted distinct query-term matches, then by document ID. This gives a useful ordering when multiple documents receive the same Boolean score.
 
 Recorded result from the current run:
 
 ```text
-Selected threshold: 3
+Selected threshold: 1
 Weights: title=1, author=0, bibliography=0, body=1
-Training F1:   0.14787
-Validation F1: 0.13787
-Test precision: 0.12647
-Test recall:    0.17673
-Test F1:        0.13872
+Training F1:   0.24767
+Validation F1: 0.21457
+Test precision@10: 0.20882
+Test recall@10:    0.32140
+Test F1@10:        0.23713
 ```
 
 ### Main Boolean files
 
-- `boolean_matching.py`: parses token lists and calculates the 0/1 field-match scores. Its default threshold is 1; `grid_search.py` explicitly compares thresholds 1, 2, and 3.
-- `scoring.py`: combines the four Boolean field scores using their weights and ranks documents.
-- `evaluation.py`: calculates precision, recall, and F1 for ranked results, using the top `k` documents (the experiments use `k=10`).
-- `grid_search.py`: precomputes field match counts, searches the weights, chooses a threshold using validation performance, and evaluates the selected configuration on test queries.
-- `diagnose_boolean.py`: optional diagnostic for short queries, queries with no returned documents, and ties at the highest score. It writes `boolean_diagnostic_report.csv`.
+- `outliers_boolean_matching.py`: parses token lists and calculates the 0/1 field-match scores.
+- `outliers_scoring.py`: combines the four Boolean field scores using their weights.
+- `outliers_evaluation.py`: calculates macro precision, recall, and F1 at the selected cutoff. Precision uses a fixed denominator of 10.
+- `outliers_grid_search.py`: precomputes field match counts, searches the weights, chooses a threshold using validation performance, and evaluates the selected configuration on test queries.
 
 ---
 
@@ -137,7 +127,7 @@ The separate `soft_test.py` evaluation used the fixed weights above and did not 
 2. Run the Boolean matching example:
 
    ```bash
-   python3 test_boolean.py
+   python3 outliers_test_boolean.py
    ```
 
    It demonstrates the results for minimum-match thresholds 1, 2, and 3.
@@ -145,7 +135,7 @@ The separate `soft_test.py` evaluation used the fixed weights above and did not 
 3. Run weight learning, validation-based threshold selection, and final test evaluation:
 
    ```bash
-   python3 grid_search.py
+   python3 outliers_grid_search.py
    ```
 
 4. (Optional) Run the query/tie diagnostic:
@@ -207,4 +197,4 @@ No third-party Python package is required by the Boolean scripts; they use the P
 
 - Training queries are used to learn field weights. Validation queries are used to choose among Boolean thresholds/configurations and to report the soft model's validation performance. Test queries are reserved for the final evaluation after the configuration is frozen.
 - A document labelled `not judged relevant` in the sample output is not necessarily confirmed non-relevant; it means there is no positive relevance judgment for that query-document pair in the available relevance file.
-- The current Boolean `evaluation.py` calculates precision using the number of documents actually returned among the top `k` (which can be fewer than `k`). The separate `soft_test.py` uses a fixed denominator of `k` for P@k. All soft test queries in the recorded run returned 10 documents, but care is needed when comparing metrics if a Boolean query returns fewer than 10. For a strict comparison, use the same precision denominator convention for both systems.
+- Boolean Precision@10 uses a fixed denominator of 10, including when fewer than 10 documents are returned. This matches the standard cutoff metric and allows comparisons with the soft test result.
