@@ -1,4 +1,4 @@
-from soft_matching import get_soft_scores
+from outliers_soft_matching import get_soft_scores
 
 FIELDS = ["title", "author", "bibliography", "body"]
 

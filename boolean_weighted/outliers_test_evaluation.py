@@ -1,5 +1,5 @@
 
-from evaluation import calculate_precision_recall_f1
+from outliers_evaluation import calculate_precision_recall_f1
 
 
 retrieved_docs = [1, 2, 3, 4, 5]

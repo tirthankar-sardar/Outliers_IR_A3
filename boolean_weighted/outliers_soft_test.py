@@ -2,8 +2,8 @@
 import csv
 from pathlib import Path
 
-from grid_search import load_csv
-from soft_grid_search import (
+from outliers_grid_search import load_csv
+from outliers_soft_grid_search import (
     precompute_soft_score_matrices,
     rank_from_cached_scores
 )

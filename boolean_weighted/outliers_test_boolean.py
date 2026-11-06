@@ -1,5 +1,5 @@
 
-from boolean_matching import boolean_field_match
+from outliers_boolean_matching import boolean_field_match
 
 query = ["aeroelastic", "aircraft", "heat", "high", "speed"]
 

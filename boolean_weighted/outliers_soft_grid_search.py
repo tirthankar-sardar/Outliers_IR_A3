@@ -4,10 +4,10 @@ import math
 
 import numpy as np
 
-from evaluation import evaluate_queries
-from grid_search import load_data
-from soft_matching import get_soft_scores
-from soft_scoring import calculate_soft_score
+from outliers_evaluation import evaluate_queries
+from outliers_grid_search import load_data
+from outliers_soft_matching import get_soft_scores
+from outliers_soft_scoring import calculate_soft_score
 
 FIELDS = ["title", "author", "bibliography", "body"]
 

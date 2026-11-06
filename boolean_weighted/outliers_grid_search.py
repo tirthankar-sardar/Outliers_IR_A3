@@ -5,8 +5,8 @@ import heapq
 import os
 import random
 
-from scoring import calculate_score
-from evaluation import evaluate_queries
+from outliers_scoring import calculate_score
+from outliers_evaluation import evaluate_queries
 
 
 FIELDS = ["title", "author", "bibliography", "body"]

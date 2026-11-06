@@ -1,5 +1,5 @@
 
-from scoring import calculate_score, score_document
+from outliers_scoring import calculate_score, score_document
 
 
 boolean_scores = {
