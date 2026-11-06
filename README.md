@@ -31,13 +31,15 @@ This diagram summarizes the complete workflow.
                  Part 1: Dataset Preparation
             Cleaning, tokenization, stemming and splits
                              |
+[outliers_SVM_MethodB/outliers_preprocessing_feature_extraction]
                 +------------+------------+
                 |                         |
                 v                         v
       Part 2: Boolean Zone       Part 3: Feature Extraction
             Scoring                    (22 features)
-           Method A                     Method B
-                                          |
+           Method A                   Method B
+                                    [outliers_SVM_MethodB]
+[boolean_weighted]                        |
                                           v
                              Part 3b: Feature Matrix
                                  Construction
