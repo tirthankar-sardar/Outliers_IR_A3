@@ -1,6 +1,6 @@
 """Interactively try free-text queries with the tuned Boolean weighted model.
 
-Run from any directory with ``python3 boolean_weighted/outleirs_testA.py``.
+Run from any directory with ``python3 outliers_testA.py``.
 Queries are normalized, Porter-stemmed, and stripped of the collection's
 stopwords before being matched against the processed Cranfield documents.
 """
@@ -11,20 +11,18 @@ import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-PROJECT_DIR = BASE_DIR.parent
-PREPROCESSING_DIR = PROJECT_DIR / "outliers_preprocesing_feature_extraction"
+PREPROCESSING_DIR = BASE_DIR / "outliers_preprocesing_feature_extraction"
 PROCESSED_DIR = PREPROCESSING_DIR / "outliers_preprocessed"
 DOCUMENTS_PATH = PROCESSED_DIR / "outliers_documents_processed.csv"
 STOPWORDS_PATH = PREPROCESSING_DIR / "outliers_raw" / "stopwords.txt"
-
-# Best configuration saved by boolean_weighted/grid_search.py.
-WEIGHTS = {"title": 1, "author": 0, "bibliography": 0, "body": 0}
-MIN_MATCHES = 3
+BOOLEAN_DIR = BASE_DIR / "boolean_weighted"
+MODEL_RESULTS_PATH = BOOLEAN_DIR / "results" / "boolean_grid_search_results.json"
 DEFAULT_LIMIT = 10
 
 # Reuse the exact tokenizer, normalization, stemming, and stopword logic used
 # when the document collection was preprocessed.
 sys.path.insert(0, str(PREPROCESSING_DIR))
+sys.path.insert(0, str(BOOLEAN_DIR))
 from outliers_porter import PorterStemmer  # noqa: E402
 from outliers_preprocess import (  # noqa: E402
     load_stemmed_stopwords,
@@ -33,8 +31,16 @@ from outliers_preprocess import (  # noqa: E402
     tokenize,
 )
 
-from boolean_matching import get_boolean_scores  # noqa: E402
-from scoring import calculate_score  # noqa: E402
+from outliers_boolean_matching import get_boolean_scores  # noqa: E402
+from outliers_scoring import calculate_score  # noqa: E402
+
+
+def load_model(path=MODEL_RESULTS_PATH):
+    """Load the validation-selected Boolean weights and match threshold."""
+    with path.open("r", encoding="utf-8") as source:
+        results = json.load(source)
+    configuration = results["selected_configuration"]
+    return configuration["weights"], int(configuration["min_matches"])
 
 
 def load_documents(path=DOCUMENTS_PATH):
@@ -57,14 +63,14 @@ def prepare_query(query, stemmer, stopwords):
     return [token for token in tokens if token not in stopwords]
 
 
-def rank_query(query_tokens, documents, limit=DEFAULT_LIMIT):
+def rank_query(query_tokens, documents, weights, min_matches, limit=DEFAULT_LIMIT):
     """Rank matching documents with the tuned Boolean field weights."""
     matches = []
     for document in documents:
         field_scores = get_boolean_scores(
-            query_tokens, document, min_matches=MIN_MATCHES
+            query_tokens, document, min_matches=min_matches
         )
-        score = calculate_score(field_scores, WEIGHTS)
+        score = calculate_score(field_scores, weights)
         if score > 0:
             matches.append((score, document))
     matches.sort(key=lambda result: (-result[0], result[1]["doc_id"]))
@@ -81,9 +87,11 @@ def main():
     stemmer = PorterStemmer()
     stopwords = load_stemmed_stopwords(STOPWORDS_PATH, stemmer)
     documents = load_documents()
+    weights, min_matches = load_model()
 
     print("Boolean weighted query tester")
-    print(f"Model: min {MIN_MATCHES} distinct query-term matches in the title")
+    print(f"Model: min {min_matches} distinct query-term matches per field")
+    print("Field weights:", weights)
     print("Enter a query, or type 'quit' to exit.\n")
 
     while True:
@@ -102,7 +110,7 @@ def main():
             print("No searchable terms remain after preprocessing.\n")
             continue
 
-        results = rank_query(query_tokens, documents)
+        results = rank_query(query_tokens, documents, weights, min_matches)
         print("Processed terms:", ", ".join(query_tokens))
         if not results:
             print("No documents matched.\n")

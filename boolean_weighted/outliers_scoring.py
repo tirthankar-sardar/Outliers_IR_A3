@@ -1,5 +1,5 @@
 
-from boolean_matching import get_boolean_scores
+from outliers_boolean_matching import get_boolean_scores
 
 
 FIELDS = [
