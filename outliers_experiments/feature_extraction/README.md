@@ -7,7 +7,7 @@ an SVM. It uses the Python standard library; tests use the existing pytest depen
 From the repository root:
 
 ```python
-from feature_extraction import FEATURE_NAMES, FeatureExtractor, load_query_tokens
+from outliers_experiments.feature_extraction import FEATURE_NAMES, FeatureExtractor, load_query_tokens
 
 extractor = FeatureExtractor.from_processed()
 queries = load_query_tokens()
@@ -122,7 +122,7 @@ package never reads relevance judgments or split assignments.
 Run from the repository root:
 
 ```bash
-python3 -m pytest feature_extraction/tests -q
+python3 -m pytest outliers_experiments/feature_extraction/tests -q
 ```
 
 Tests independently calculate all 22 expected values on a tiny corpus, including

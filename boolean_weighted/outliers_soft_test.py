@@ -134,6 +134,7 @@ def main():
 
     data_dir = (
         project_root /
+        "outliers_experiments" /
         "preprocessing" /
         "data" /
         "processed"

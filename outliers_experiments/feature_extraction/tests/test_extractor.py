@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from feature_extraction import FEATURE_NAMES, FeatureExtractor, load_query_tokens
+from outliers_experiments.feature_extraction import FEATURE_NAMES, FeatureExtractor, load_query_tokens
 
 
 def test_all_22_features_against_small_corpus():

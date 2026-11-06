@@ -12,10 +12,12 @@ from outliers_evaluation import evaluate_queries
 FIELDS = ["title", "author", "bibliography", "body"]
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTLIERS_PROCESSED_DIR = os.path.join(
-    BASE_DIR, "..", "outliers_preprocesing_feature_extraction", "outliers_preprocessed"
+    BASE_DIR, "..", "outliers_SVM_MethodB", "outliers_preprocesing_feature_extraction",
+    "outliers_preprocessed"
 )
 OUTLIERS_QRELS_PATH = os.path.join(
-    BASE_DIR, "..", "outliers_preprocesing_feature_extraction", "outliers_raw", "cranqrel"
+    BASE_DIR, "..", "outliers_SVM_MethodB", "outliers_preprocesing_feature_extraction",
+    "outliers_raw", "cranqrel"
 )
 
 

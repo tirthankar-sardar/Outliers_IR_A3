@@ -31,18 +31,19 @@ This diagram summarizes the complete workflow.
                  Part 1: Dataset Preparation
             Cleaning, tokenization, stemming and splits
                              |
-[outliers_SVM_MethodB/outliers_preprocessing_feature_extraction]
+[outliers_SVM_MethodB/outliers_preprocesing_feature_extraction]
                 +------------+------------+
                 |                         |
                 v                         v
       Part 2: Boolean Zone       Part 3: Feature Extraction
             Scoring                    (22 features)
            Method A                   Method B
-                                    [outliers_SVM_MethodB]
+                                    [outliers_experiments/feature_extraction]
 [boolean_weighted]                        |
                                           v
                              Part 3b: Feature Matrix
                                  Construction
+                         [outliers_experiments/feature_matrix]
                                           |
                                           v
                              Part 4: Linear SVM
@@ -59,7 +60,7 @@ git clone https://github.com/trishitasaha/Outliers_IR_A3.git
 cd Outliers_IR_A3
 ```
 
-The repository contains separate modules for dataset preparation, Boolean Weighted Zone Scoring, feature extraction and feature matrix construction.
+The repository contains separate modules for dataset preparation, Boolean Weighted Zone Scoring, feature extraction and feature matrix construction. Dataset preparation, feature extraction and feature matrix construction are grouped under `outliers_experiments/`.
 
 ## 4. Create a Virtual Environment
 
@@ -113,7 +114,7 @@ python3 ../outliers_testA.py
 
 Enter a query at the `Query>` prompt. Type `quit`, `exit`, or `q` to stop. The tester applies the collection's normalization, Porter stemming, and stopword filtering, then returns up to 10 matching documents. It prints each document's ID, score, title, and a short body snippet; it does not save these interactive rankings to a file.
 
-The tester reads `results/boolean_grid_search_results.json` and uses its `selected_configuration` (`min_matches` and `weights`) to score each document for the new query. In the current results file, the selected threshold is 3 and the weights are title=1, author=0, bibliography=0, body=0. These values are loaded from the JSON, so rerunning the grid search and updating that file changes the tester's configuration.
+The tester reads `results/boolean_grid_search_results.json` and uses its `selected_configuration` (`min_matches` and `weights`) to score each document for the new query. In the current results file, the selected threshold is 1 and the weights are title=1, author=0, bibliography=0, body=1. These values are loaded from the JSON, so rerunning the grid search and updating that file changes the tester's configuration.
 
 Before running, make sure these files exist:
 
@@ -205,7 +206,7 @@ python -m pytest
 Run the feature extraction and matrix tests from the repository root:
 
 ```bash
-python3 -m pytest feature_matrix feature_extraction -q
+python3 -m pytest outliers_experiments/feature_matrix outliers_experiments/feature_extraction -q
 ```
 
 For the Boolean module, run:

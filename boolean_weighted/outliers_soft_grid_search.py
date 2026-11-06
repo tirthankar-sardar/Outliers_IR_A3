@@ -185,7 +185,7 @@ def count_top_k_ties(rankings, query_ids, k=10):
 
 
 if __name__ == "__main__":
-    DATA_DIR = "../preprocessing/data/processed"
+    DATA_DIR = "../outliers_experiments/preprocessing/data/processed"
 
     (
         documents,

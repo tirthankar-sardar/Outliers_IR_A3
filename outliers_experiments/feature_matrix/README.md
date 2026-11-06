@@ -33,8 +33,8 @@ From the **repository root**:
 
 ```bash
 pip install numpy pytest
-python3 -m feature_matrix.build_matrix          
-python3 -m pytest feature_matrix feature_extraction -q   
+python3 -m outliers_experiments.feature_matrix.build_matrix
+python3 -m pytest outliers_experiments/feature_matrix outliers_experiments/feature_extraction -q
 ```
 
 Optional arguments:
@@ -45,7 +45,7 @@ Optional arguments:
 | `--neg-ratio K` | `20` | Negatives kept per positive in `train_sampled.npz` |
 | `--seed S` | `42` | Seed for negative sampling |
 | `--processed-dir PATH` | Part 1 output folder | Location of the processed CSVs |
-| `--output-dir PATH` | `feature_matrix/output` | Where the matrices are written |
+| `--output-dir PATH` | `outliers_experiments/feature_matrix/output` | Where the matrices are written |
 
 Requires Python 3.9+ and `numpy`.
 
@@ -99,7 +99,7 @@ Positive check: 1,144 + 230 + 238 = 1,612 = number of rows in `relevance.csv`.
 
 ---
 
-## 5. Output files (`feature_matrix/output/`)
+## 5. Output files (`outliers_experiments/feature_matrix/output/`)
 
 | File | Content |
 |---|---|
@@ -114,7 +114,7 @@ Positive check: 1,144 + 230 + 238 = 1,612 = number of rows in `relevance.csv`.
 ## 6. Using the matrices in Part 4
 
 ```python
-from feature_matrix.loader import load_split, load_scaler
+from outliers_experiments.feature_matrix.loader import load_split, load_scaler
 from sklearn.svm import LinearSVC
 import numpy as np
 

@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from feature_extraction import FEATURE_NAMES, FeatureExtractor
-from feature_matrix.build_matrix import build_split, sample_negatives, read_grades, read_special, read_split_ids, PROCESSED
+from outliers_experiments.feature_extraction import FEATURE_NAMES, FeatureExtractor
+from outliers_experiments.feature_matrix.build_matrix import build_split, sample_negatives, read_grades, read_special, read_split_ids, PROCESSED
 
 
 @pytest.fixture

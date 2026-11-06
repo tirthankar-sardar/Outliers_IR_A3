@@ -13,11 +13,12 @@ Outliers_IR_A3/
 │   ├── outliers_boolean_matching.py
 │   ├── outliers_scoring.py
 │   └── outliers_evaluation.py
-├── outliers_preprocesing_feature_extraction/
-│   ├── outliers_preprocessed/
-│   │   ├── outliers_documents_processed.csv
-│   │   └── outliers_queries_processed.csv
-│   └── outliers_raw/cranqrel
+└── outliers_SVM_MethodB/
+    └── outliers_preprocesing_feature_extraction/
+        ├── outliers_preprocessed/
+        │   ├── outliers_documents_processed.csv
+        │   └── outliers_queries_processed.csv
+        └── outliers_raw/cranqrel
 ```
 
 The Boolean grid search uses the processed CSVs and qrels paths relative to the project root. It creates `boolean_weighted/results/boolean_grid_search_results.json`.

@@ -7,13 +7,13 @@ import sys
 from pathlib import Path
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from feature_extraction import FEATURE_NAMES, FeatureExtractor, load_query_tokens  
+from outliers_experiments.feature_extraction import FEATURE_NAMES, FeatureExtractor, load_query_tokens
 
-PROCESSED = ROOT / "preprocessing" / "data" / "processed"
+PROCESSED = ROOT / "outliers_experiments" / "preprocessing" / "data" / "processed"
 OUTPUT = Path(__file__).resolve().parent / "output"
 SPLITS = ("train", "val", "test")
 

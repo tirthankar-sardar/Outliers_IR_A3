@@ -31,7 +31,7 @@ Each document has an ID (`.I`) and four fields, which are kept separate througho
 
 ## C. Installation and Execution
 
-Run these from inside the `cranfield_ir_project` folder:
+Run these from `outliers_experiments/preprocessing/`:
 
 ```bash
 pip install -r requirements.txt

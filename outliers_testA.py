@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-PREPROCESSING_DIR = BASE_DIR / "outliers_preprocesing_feature_extraction"
+PREPROCESSING_DIR = BASE_DIR / "outliers_SVM_MethodB" / "outliers_preprocesing_feature_extraction"
 PROCESSED_DIR = PREPROCESSING_DIR / "outliers_preprocessed"
 DOCUMENTS_PATH = PROCESSED_DIR / "outliers_documents_processed.csv"
 STOPWORDS_PATH = PREPROCESSING_DIR / "outliers_raw" / "stopwords.txt"
